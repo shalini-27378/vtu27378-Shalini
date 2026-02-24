@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="registration.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="container">
+    <h2>Registration Form</h2>
+
+    <form>
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Enter your name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter password" required>
+
+        <label for="gender">Gender</label>
+        <select id="gender" required>
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </select>
+        <label for="role">Role</label>
+         <select id="gender" required>
+            <option value="">Select</option>
+            <option>Resident</option>
+            <option>Staff</option>
+           
+        </select>
+
+
+        <button type="submit">Register</button>
+        </form>
+
+     <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.getElementById('name').name = 'full_name';
+    document.getElementById('email').name = 'email';
+    document.getElementById('password').name = 'password';
+    document.getElementById('gender').name = 'gender';
+    
+    
+    const selects = document.querySelectorAll('select');
+    selects[1].id = 'role'; 
+    selects[1].name = 'role';
+    
+    
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        
+        
+        const formData = new FormData(this);
+        
+        
+        fetch('register.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(result => {
+            alert(result); 
+            
+            /
+            if (result.includes('successful')) {
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Registration failed. Please try again.');
+        });
+    });
+});
+</script>
+    
+</div>
+
+</body>
+</html>
