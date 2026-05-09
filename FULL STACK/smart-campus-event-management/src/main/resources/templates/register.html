@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Register for Event - SmartCampus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/" class="navbar-brand"><div class="brand-icon"><i class="fas fa-calendar-star"></i></div>SmartCampus</a>
+    <ul class="navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/events" class="active">Events</a></li>
+        <li><a href="/my-registrations">My Registrations</a></li>
+    </ul>
+    <div class="navbar-actions">
+        <!-- Unauthenticated View -->
+        <span sec:authorize="!isAuthenticated()">
+            <a href="/user-register" class="btn btn-outline btn-sm">Register</a>
+            <a href="/login" class="btn btn-primary btn-sm">Sign In</a>
+        </span>
+        <!-- Authenticated View (Admin) -->
+        <span sec:authorize="hasRole('ADMIN')">
+            <a href="/admin/dashboard" class="btn btn-outline btn-sm">Admin Dashboard</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            </form>
+        </span>
+        <!-- Authenticated View (Student) -->
+        <span sec:authorize="hasRole('STUDENT')">
+            <a href="/student-dashboard" class="btn btn-outline btn-sm">Dashboard</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            </form>
+        </span>
+    </div>
+</nav>
+
+<div class="page-content" style="max-width:800px;margin:0 auto;">
+    <a href="/events" style="display:inline-flex;align-items:center;gap:0.5rem;color:var(--text-muted);text-decoration:none;font-size:0.88rem;margin-bottom:1.5rem;">
+        <i class="fas fa-arrow-left"></i> Back to Events
+    </a>
+
+    <!-- Event Summary Card -->
+    <div class="card" style="padding:1.5rem;margin-bottom:1.5rem;display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;">
+        <div style="width:80px;height:80px;background:var(--gradient);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">🎓</div>
+        <div style="flex:1;">
+            <span class="event-type-badge badge-workshop" th:text="${event.type}">Type</span>
+            <h2 style="font-size:1.2rem;font-weight:800;color:var(--text-dark);" th:text="${event.title}">Title</h2>
+            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:0.5rem;">
+                <span class="event-meta-item" style="font-size:0.82rem;">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span th:text="${#temporals.format(event.eventDate, 'dd MMM yyyy, hh:mm a')}">Date</span>
+                </span>
+                <span class="event-meta-item" style="font-size:0.82rem;">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span th:text="${event.venue}">Venue</span>
+                </span>
+                <span class="event-meta-item" style="font-size:0.82rem;">
+                    <i class="fas fa-users"></i>
+                    <span th:text="${event.availableSeats} + ' seats available'">Seats</span>
+                </span>
+            </div>
+        </div>
+        <div style="text-align:right;">
+            <div class="event-price" th:text="${event.ticketPrice != null and event.ticketPrice > 0} ? '₹' + ${event.ticketPrice} + '/ticket' : 'FREE'">FREE</div>
+        </div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="card" style="padding:2rem;">
+        <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:0.4rem;">Registration Form</h2>
+        <p class="text-muted" style="font-size:0.88rem;margin-bottom:1.5rem;">Fill in your details to register for this event</p>
+
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${errorMessage}">Error</span>
+        </div>
+
+        <form th:action="@{/register/{id}(id=${event.id})}" th:object="${registration}" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="studentName">Full Name *</label>
+                    <input type="text" id="studentName" th:field="*{studentName}" class="form-control"
+                           th:classappend="${#fields.hasErrors('studentName')} ? 'is-invalid'"
+                           placeholder="Enter your full name"/>
+                           
+                    <span class="form-error" th:if="${#fields.hasErrors('studentName')}" th:errors="*{studentName}"></span>
+                </div>
+                
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address *</label>
+                    <input type="email" id="email" th:field="*{email}" class="form-control"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                           placeholder="your@email.com"/>
+                    <span class="form-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="department">Department *</label>
+                    <select id="department" th:field="*{department}" class="form-select"
+                            th:classappend="${#fields.hasErrors('department')} ? 'is-invalid'">
+                        <option value="">Select Department</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Management">Management</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span class="form-error" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ticketsBooked">Number of Tickets *</label>
+                    <input type="number" id="ticketsBooked" th:field="*{ticketsBooked}" class="form-control"
+                           th:classappend="${#fields.hasErrors('ticketsBooked')} ? 'is-invalid'"
+                           min="1" max="10" placeholder="1"
+                           th:attr="max=${event.availableSeats}"/>
+                    <input type="hidden" id="maxSeats" th:value="${event.availableSeats}"/>
+                    <span class="form-hint">Max <span th:text="${event.availableSeats}">10</span> tickets available</span>
+                    <span class="form-error" th:if="${#fields.hasErrors('ticketsBooked')}" th:errors="*{ticketsBooked}"></span>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-ticket-alt"></i> Confirm Registration
+                </button>
+                <a href="/events" class="btn btn-outline btn-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/main.js?v=2}"></script>
+</body>
+</html>

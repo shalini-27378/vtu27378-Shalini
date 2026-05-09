@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Create Account - SmartCampus Events</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="auth-page">
+
+    <!-- LEFT BRAND PANEL — unchanged design -->
+    <div class="auth-brand-panel">
+        <div class="auth-brand-logo">
+            <div class="logo-icon"><i class="fas fa-calendar-star"></i></div>
+            SmartCampus
+        </div>
+        <h1 class="auth-brand-title">Join Smart<br/>Campus Events</h1>
+        <p class="auth-brand-sub">Create your account to manage or participate in campus events, workshops, and seminars.</p>
+        <ul class="auth-features">
+            <li><div class="feat-check">✓</div> Browse upcoming campus events</li>
+            <li><div class="feat-check">✓</div> Register instantly for any event</li>
+            <li><div class="feat-check">✓</div> Share feedback &amp; track registrations</li>
+            <li><div class="feat-check">✓</div> Get notified about new events</li>
+        </ul>
+    </div>
+
+    <!-- RIGHT FORM PANEL — unchanged design -->
+    <div class="auth-form-panel">
+        <div style="max-width:420px;width:100%;margin:0 auto;">
+            <div class="auth-form-header">
+                <h2>Create Account</h2>
+                <p>Fill in your details to get started</p>
+            </div>
+
+            <form th:action="@{/user-register}" th:object="${registerDTO}" method="post">
+
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label class="form-label" for="fullName">Full Name</label>
+                    <input type="text" id="fullName" th:field="*{fullName}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid'"
+                           placeholder="Enter your full name"/>
+                    <span class="form-error"
+                          th:if="${#fields.hasErrors('fullName')}"
+                          th:errors="*{fullName}"></span>
+                </div>
+
+                <!-- Username -->
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" th:field="*{username}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'"
+                           placeholder="Choose a username (min 4 chars, no spaces)"/>
+                    <span class="form-error"
+                          th:if="${#fields.hasErrors('username')}"
+                          th:errors="*{username}"></span>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" th:field="*{email}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                           placeholder="your@email.com"/>
+                    <span class="form-error"
+                          th:if="${#fields.hasErrors('email')}"
+                          th:errors="*{email}"></span>
+                </div>
+
+                <!-- Role -->
+                <div class="form-group">
+                    <label class="form-label" for="role">Account Type</label>
+                    <select id="role" th:field="*{role}" class="form-select">
+                        <option value="STUDENT">Student</option>
+                        <option value="ADMIN">Admin</option>
+                    </select>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" th:field="*{password}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                           placeholder="Create a password (min 6 characters)"/>
+                    <span class="form-error"
+                          th:if="${#fields.hasErrors('password')}"
+                          th:errors="*{password}"></span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"
+                           placeholder="Re-enter your password"/>
+                    <span class="form-error"
+                          th:if="${#fields.hasErrors('confirmPassword')}"
+                          th:errors="*{confirmPassword}"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100"
+                        style="margin-top:0.5rem;justify-content:center;">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <p style="text-align:center;margin-top:1.5rem;font-size:0.88rem;color:var(--text-muted);">
+                Already have an account?
+                <a href="/login" style="color:var(--primary);font-weight:600;">Sign in here</a>
+            </p>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/main.js?v=2}"></script>
+</body>
+</html>

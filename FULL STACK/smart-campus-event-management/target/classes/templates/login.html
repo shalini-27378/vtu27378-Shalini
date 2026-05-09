@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sign In - SmartCampus Events</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div class="auth-page">
+
+    <!-- LEFT BRAND PANEL — unchanged design -->
+    <div class="auth-brand-panel">
+        <div class="auth-brand-logo">
+            <div class="logo-icon"><i class="fas fa-calendar-star"></i></div>
+            SmartCampus
+        </div>
+        <h1 class="auth-brand-title">Welcome Back!</h1>
+        <p class="auth-brand-sub">Manage campus events, track registrations, and view analytics — all from one powerful dashboard.</p>
+        <ul class="auth-features">
+            <li><div class="feat-check">✓</div> Create &amp; manage campus events</li>
+            <li><div class="feat-check">✓</div> View registration statistics</li>
+            <li><div class="feat-check">✓</div> Monitor student feedback</li>
+            <li><div class="feat-check">✓</div> Filter &amp; search events easily</li>
+            <li><div class="feat-check">✓</div> Full CRUD event management</li>
+        </ul>
+    </div>
+
+    <!-- RIGHT FORM PANEL — unchanged design -->
+    <div class="auth-form-panel">
+        <div style="max-width:400px;width:100%;margin:0 auto;">
+            <div class="auth-form-header">
+                <h2>Sign In</h2>
+                <p>Enter your username or email and password</p>
+            </div>
+
+            <!-- Registration success -->
+            <div th:if="${param.registered}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                Account created successfully! You can now sign in.
+            </div>
+
+            <!-- Login error -->
+            <div th:if="${param.error}" class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                Invalid username/email or password. Please try again.
+            </div>
+
+            <!-- Logout success -->
+            <div th:if="${param.logout}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                You have been logged out successfully.
+            </div>
+
+            <!-- Registration success (flash attribute) -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${successMessage}">Success</span>
+            </div>
+
+            <!-- Role Toggle -->
+            <div style="display:flex;background:rgba(255,255,255,0.05);border-radius:var(--radius-sm);margin-bottom:1.5rem;padding:0.25rem;border:1px solid var(--border-color);">
+                <button type="button" id="btnStudent" class="btn btn-primary" style="flex:1;border-radius:var(--radius-sm);box-shadow:none;padding:0.5rem;margin:0;" onclick="setRole('STUDENT')">Student</button>
+                <button type="button" id="btnAdmin" class="btn" style="flex:1;background:transparent;color:var(--text-muted);border:none;box-shadow:none;padding:0.5rem;margin:0;" onclick="setRole('ADMIN')">Admin</button>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label class="form-label" for="username">Username or Email</label>
+                    <input type="text" id="username" name="username" class="form-control"
+                           placeholder="Enter your username or email"
+                           required autocomplete="username"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" id="passwordLabel" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control"
+                           placeholder="Enter your password"
+                           required autocomplete="current-password"/>
+                    <span id="adminHint" class="form-hint" style="display:none;color:var(--primary);margin-top:0.4rem;">Admins must use the golden passkey to log in</span>
+                </div>
+                <button type="submit" class="btn btn-primary w-100"
+                        style="margin-top:0.5rem;justify-content:center;">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <script>
+                function setRole(role) {
+                    const btnStudent = document.getElementById('btnStudent');
+                    const btnAdmin = document.getElementById('btnAdmin');
+                    const pwLabel = document.getElementById('passwordLabel');
+                    const pwInput = document.getElementById('password');
+                    const adminHint = document.getElementById('adminHint');
+
+                    if (role === 'ADMIN') {
+                        btnAdmin.className = 'btn btn-primary';
+                        btnAdmin.style.background = 'var(--primary)';
+                        btnAdmin.style.color = '#fff';
+                        btnStudent.className = 'btn';
+                        btnStudent.style.background = 'transparent';
+                        btnStudent.style.color = 'var(--text-muted)';
+                        
+                        pwLabel.innerText = 'Secret Admin Passkey';
+                        pwLabel.style.color = 'var(--primary)';
+                        pwInput.placeholder = 'Enter the golden passkey';
+                        pwInput.style.borderColor = 'var(--primary)';
+                        pwInput.style.background = 'rgba(212,175,55,0.05)';
+                        adminHint.style.display = 'block';
+                    } else {
+                        btnStudent.className = 'btn btn-primary';
+                        btnStudent.style.background = 'var(--primary)';
+                        btnStudent.style.color = '#fff';
+                        btnAdmin.className = 'btn';
+                        btnAdmin.style.background = 'transparent';
+                        btnAdmin.style.color = 'var(--text-muted)';
+                        
+                        pwLabel.innerText = 'Password';
+                        pwLabel.style.color = '';
+                        pwInput.placeholder = 'Enter your password';
+                        pwInput.style.borderColor = '';
+                        pwInput.style.background = '';
+                        adminHint.style.display = 'none';
+                    }
+                }
+            </script>
+
+            <p style="text-align:center;margin-top:1.5rem;font-size:0.88rem;color:var(--text-muted);">
+                Don't have an account?
+                <a href="/user-register" style="color:var(--primary);font-weight:600;">Student Register</a> |
+                <a href="/admin-register" style="color:var(--primary);font-weight:600;">Admin Register</a>
+            </p>
+            <p style="text-align:center;margin-top:0.5rem;font-size:0.88rem;color:var(--text-muted);">
+                <a href="/" style="color:var(--text-muted);">← Back to Home</a>
+            </p>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/main.js?v=2}"></script>
+</body>
+</html>
